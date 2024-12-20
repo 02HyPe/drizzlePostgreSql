@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "migrate": "drizzle-kit generate",
+    "dev": "tsx watch src/main.ts"
+  },
+  "dependencies": {
+    "argon2": "^0.41.1",
+    "concurrently": "^9.1.0",
+    "drizzle-orm": "^0.38.2",
+    "fastify": "^5.2.0",
+    "nodemon": "^3.1.9",
+    "pg": "^8.13.1",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "zennv": "^0.1.1",
+    "zod-to-json-schema": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.30.1"
+  }
+}
