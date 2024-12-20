@@ -18,10 +18,10 @@ export const applications = pgTable("applications", {
 export const users = pgTable(
   "users",
   {
-    id: uuid("id").defaultRandom().notNull(),
+    id: uuid("id").unique().defaultRandom().notNull(),
     email: varchar("email", { length: 255 }).notNull(),
     name: varchar("name", { length: 255 }).notNull(),
-    applicationsId: uuid("application").references(() => applications.id),
+    applicationId: uuid("applicationId").references(() => applications.id),
     password: varchar("password", { length: 256 }).notNull(),
     createdAt: timestamp("created").defaultNow().notNull(),
     updatedAt: timestamp("updated").defaultNow().notNull(),
@@ -29,8 +29,8 @@ export const users = pgTable(
   (users) => {
     return [
       {
-        cpk: primaryKey({ columns: [users.email, users.applicationsId] }),
-        idTndex: uniqueIndex("users_id_index").on(users.id),
+        cpk: primaryKey({ columns: [users.email, users.applicationId] }),
+        idIndex: uniqueIndex("users_id_index").on(users.id),
       },
     ];
   }
@@ -39,9 +39,9 @@ export const users = pgTable(
 export const roles = pgTable(
   "roles",
   {
-    id: uuid("id").defaultRandom().notNull(),
+    id: uuid("id").unique().defaultRandom().notNull(),
     name: varchar("name", { length: 255 }).notNull(),
-    applicationId: uuid("application").references(() => applications.id),
+    applicationId: uuid("applicationId").references(() => applications.id),
     permissions: text("permissions").array().$type<Array<string>>(),
     createdAt: timestamp("created").defaultNow().notNull(),
     updatedAt: timestamp("updated").defaultNow().notNull(),
@@ -50,7 +50,7 @@ export const roles = pgTable(
     return [
       {
         cpk: primaryKey({ columns: [roles.name, roles.applicationId] }),
-        idTndex: uniqueIndex("roles_id_index").on(roles.id),
+        idIndex: uniqueIndex("roles_id_index").on(roles.id),
       },
     ];
   }
