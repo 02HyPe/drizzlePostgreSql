@@ -1,12 +1,14 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateUserBody } from "./users.schemas";
+import { CreateUserBody, LoginBody } from "./users.schemas";
 import { SYSTEM_ROLES } from "../../config/permissions";
 import { getRoleByName } from "../roles/roles.services";
 import {
   assignRoleToUser,
   createUser,
   getUserByApplication,
+  getUserByEmail,
 } from "./users.services";
+import jwt from "jsonwebtoken";
 import { users } from "../../db/schema";
 
 export const createUserHandler = async (
@@ -20,6 +22,7 @@ export const createUserHandler = async (
 
   if (roleName === SYSTEM_ROLES.SUPER_ADMIN) {
     const appUsers = await getUserByApplication(data.applicationId);
+    console.log(appUsers);
     if (appUsers.length > 0) {
       return reply.code(400).send({
         message: " Application already has super admin user",
@@ -53,4 +56,16 @@ export const createUserHandler = async (
   } catch (error) {
     throw new Error("error");
   }
+};
+
+export const loginHandler = async (
+  request: FastifyRequest<{ Body: LoginBody }>,
+  reply: FastifyReply
+) => {
+  const { applicationId, email, password } = request.body;
+  const user = getUserByEmail({ email, applicationId });
+  if (!user) {
+    return reply.code(400).send({ msg: "invalid cresential" });
+  }
+  //   const token = jwt.sign({});
 };

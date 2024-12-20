@@ -26,11 +26,11 @@ const main = async () => {
 
   const signals = ["SIGINT", "SIGTERM"];
 
-  logger.debug(env, "ussing env");
+  // logger.debug(env, "ussing env");
 
   for (const signal of signals) {
     process.on(signal, () => {
-      console.log("signal", signal);
+      // console.log("signal", signal);
       gracefulShutdown({ app });
     });
   }

@@ -4,10 +4,12 @@
     "dev": "tsx watch src/main.ts"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
     "argon2": "^0.41.1",
     "concurrently": "^9.1.0",
     "drizzle-orm": "^0.38.2",
     "fastify": "^5.2.0",
+    "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.9",
     "pg": "^8.13.1",
     "pino": "^9.5.0",
