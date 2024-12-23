@@ -9,6 +9,7 @@
     "concurrently": "^9.1.0",
     "drizzle-orm": "^0.38.2",
     "fastify": "^5.2.0",
+    "fastify-guard": "^3.0.0",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.9",
     "pg": "^8.13.1",

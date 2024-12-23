@@ -26,6 +26,20 @@ const loginSchema = z.object({
 
 export type LoginBody = z.infer<typeof loginSchema>;
 
-export const LoginBodyJsonSchema = {
+export const LoginJsonSchema = {
   body: zodToJsonSchema(loginSchema, "loginSchema"),
+};
+
+//assignRoletoUser
+
+export const assignRoleToUserSchema = z.object({
+  userId: z.string().uuid(),
+  roleId: z.string().uuid(),
+  applicationId: z.string().uuid(),
+});
+
+export type AssignRoleToUserBody = z.infer<typeof assignRoleToUserSchema>;
+
+export const assignRoleToUserJsonSchema = {
+  body: zodToJsonSchema(assignRoleToUserSchema, "assignRoleToUserSchema"),
 };

@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateApplicationBody } from "./applications.schemas";
 import { createApplication, getApplications } from "./application.services";
-import { createRole } from "../roles/roles.services";
+import { createRole } from "../roles/role.services";
 import {
   ALL_PERMISSION,
   SYSTEM_ROLES,

@@ -1,5 +1,5 @@
 import { InferInsertModel, eq, and } from "drizzle-orm";
-import { applications, users, userToRoles } from "../../db/schema";
+import { applications, roles, users, userToRoles } from "../../db/schema";
 import { db } from "../../db";
 import argon2 from "argon2";
 
@@ -43,12 +43,51 @@ export const getUserByEmail = async ({
   applicationId: string;
 }) => {
   const result = await db
-    .select()
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      applicationId: users.applicationId,
+      roleId: roles.id,
+      password: users.password,
+      permissions: roles.permissions,
+    })
     .from(users)
-    .where(and(eq(users.email, email), eq(users.applicationId, applicationId)));
+    .where(and(eq(users.email, email), eq(users.applicationId, applicationId)))
+    .leftJoin(
+      userToRoles,
+      and(
+        eq(userToRoles.userId, users.id),
+        eq(userToRoles.applicationId, users.applicationId)
+      )
+    )
+    .leftJoin(roles, eq(roles.id, userToRoles.roleId));
 
   if (!result.length) {
     return null;
   }
-  return result;
+
+  const user = result.reduce((acc, curr) => {
+    if (!acc.id) {
+      return {
+        ...curr,
+        permissions: new Set(curr.permissions),
+      };
+    }
+
+    if (!curr.permissions) {
+      return acc;
+    }
+
+    for (const permission of curr.permissions) {
+      acc.permissions.add(permission);
+    }
+
+    return acc;
+  }, {} as Omit<(typeof result)[number], "permissions"> & { permissions: Set<string> });
+
+  return {
+    ...user,
+    permissions: Array.from(user.permissions),
+  };
 };

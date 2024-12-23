@@ -1,7 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateUserBody, LoginBody } from "./users.schemas";
+import {
+  AssignRoleToUserBody,
+  CreateUserBody,
+  LoginBody,
+} from "./users.schemas";
 import { SYSTEM_ROLES } from "../../config/permissions";
-import { getRoleByName } from "../roles/roles.services";
+import { getRoleByName } from "../roles/role.services";
 import {
   assignRoleToUser,
   createUser,
@@ -10,6 +14,7 @@ import {
 } from "./users.services";
 import jwt from "jsonwebtoken";
 import { users } from "../../db/schema";
+import { logger } from "../../utils/logger";
 
 export const createUserHandler = async (
   request: FastifyRequest<{ Body: CreateUserBody }>,
@@ -63,9 +68,40 @@ export const loginHandler = async (
   reply: FastifyReply
 ) => {
   const { applicationId, email, password } = request.body;
-  const user = getUserByEmail({ email, applicationId });
+  const user = await getUserByEmail({ email, applicationId });
   if (!user) {
     return reply.code(400).send({ msg: "invalid cresential" });
   }
-  //   const token = jwt.sign({});
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email,
+      applicationId,
+      scopes: user.permissions,
+    },
+    "supersecretpoi"
+  );
+
+  return { token };
+};
+
+export const assignRoleToUserHandler = async (
+  request: FastifyRequest<{ Body: AssignRoleToUserBody }>,
+  reply: FastifyReply
+) => {
+  const { roleId, userId } = request.body;
+  const user = request.user;
+  const applicationId = user.applicationId;
+  try {
+    const result = await assignRoleToUser({
+      userId,
+      applicationId,
+      roleId,
+    });
+    return result;
+  } catch (error) {
+    logger.error(error, `error assigning roles to user `);
+    reply.code(400).send({ message: "error assigning roles to user" });
+    return;
+  }
 };
